@@ -1,0 +1,61 @@
+{
+  "name": "@sera/feathers-pubsub",
+  "version": "1.0.0",
+  "description": "FeathersJS service for Google Cloud Pub/Sub integration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix",
+    "format": "prettier --write \"**/*.{ts,json,md}\"",
+    "prepare": "pnpm build"
+  },
+  "keywords": [
+    "feathers",
+    "feathersjs",
+    "service",
+    "queue",
+    "pubsub",
+    "google-cloud",
+    "typescript"
+  ],
+  "author": "Sera",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sera/feathers-pubsub.git"
+  },
+  "bugs": {
+    "url": "https://github.com/sera/feathers-pubsub/issues"
+  },
+  "homepage": "https://github.com/sera/feathers-pubsub#readme",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@feathersjs/feathers": "^5.0.0",
+    "@google-cloud/pubsub": "4.11.0",
+    "debug": "^4.3.4",
+    "save": "2.9.0",
+    "uuid": "9.0.1"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.8",
+    "@types/node": "^20.0.0",
+    "@types/uuid": "^9.0.0",
+    "@typescript-eslint/eslint-plugin": "^6.0.0",
+    "@typescript-eslint/parser": "^6.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^9.0.0",
+    "prettier": "^3.0.0",
+    "sinon": "15.2.0",
+    "typescript": "^5.0.0",
+    "vitest": "^1.0.0"
+  },
+  "peerDependencies": {
+    "@feathersjs/feathers": "^5.0.0"
+  }
+}
