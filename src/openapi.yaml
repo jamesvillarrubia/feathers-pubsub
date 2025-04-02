@@ -1,0 +1,156 @@
+openapi: 3.0.0
+info:
+  title: Feathers PubSub Queue API
+  version: 1.0.0
+  description: API for managing asynchronous message queues using Google Cloud Pub/Sub
+
+servers:
+  - url: http://localhost:3031
+    description: Local development server
+
+components:
+  schemas:
+    QueueMessage:
+      type: object
+      required:
+        - payload
+      properties:
+        metadata:
+          type: object
+          properties:
+            messageId:
+              type: string
+              format: uuid
+            timestamp:
+              type: integer
+              format: int64
+            priority:
+              type: integer
+              minimum: 1
+              maximum: 10
+              default: 5
+            scheduledFor:
+              type: integer
+              format: int64
+              description: Unix timestamp for scheduled processing
+            retryCount:
+              type: integer
+              minimum: 0
+            maxRetries:
+              type: integer
+              minimum: 1
+            queueName:
+              type: string
+        payload:
+          type: object
+          required:
+            - service
+            - action
+          properties:
+            service:
+              type: string
+              description: Name of the Feathers service to process the message
+            action:
+              type: string
+              enum: [create, get, find, patch, remove, update]
+              description: Action to perform on the service
+            queueName:
+              type: string
+              description: Name of the queue to use (defaults to 'default')
+            data:
+              type: object
+              description: Data to be processed by the service
+            id:
+              type: string
+              description: ID for get/patch/remove/update operations
+            params:
+              type: object
+              description: Additional parameters for the service call
+            query:
+              type: object
+              description: Query parameters for find operations
+            method:
+              type: string
+              description: Custom method to call on the service
+            methodArgs:
+              type: array
+              description: Arguments for the custom method
+              items:
+                type: object
+
+    QueueResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        metadata:
+          $ref: '#/components/schemas/QueueMessage/properties/metadata'
+        payload:
+          $ref: '#/components/schemas/QueueMessage/properties/payload'
+        status:
+          type: string
+          enum: [pending, processing, completed, failed]
+        processingHistory:
+          type: array
+          items:
+            type: object
+            properties:
+              timestamp:
+                type: integer
+                format: int64
+              status:
+                type: string
+              error:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  code:
+                    type: string
+
+paths:
+  /queue:
+    post:
+      summary: Create a new queue message
+      description: Creates and publishes a new message to the specified queue
+      operationId: createQueueMessage
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QueueMessage'
+      responses:
+        '201':
+          description: Message created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueueResponse'
+        '400':
+          description: Invalid request data
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  message:
+                    type: string
+                  code:
+                    type: integer
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  name:
+                    type: string
+                  message:
+                    type: string
+                  code:
+                    type: integer 

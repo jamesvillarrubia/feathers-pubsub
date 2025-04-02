@@ -36,7 +36,7 @@ app.configure(QueueService, {
       max_retry_delay: 30000,
       message_timeout: 30000,
       batch_size: 10,
-      priority_levels: 10
+      priority_levels: 10,
     },
     high_priority: {
       topic: 'high-priority-topic',
@@ -46,9 +46,9 @@ app.configure(QueueService, {
       max_retry_delay: 15000,
       message_timeout: 15000,
       batch_size: 5,
-      priority_levels: 5
-    }
-  }
+      priority_levels: 5,
+    },
+  },
 });
 ```
 
@@ -62,13 +62,13 @@ const message = await app.service('queue').create({
   metadata: {
     messageId: uuidv4(),
     timestamp: Date.now(),
-    priority: 1
+    priority: 1,
   },
   payload: {
     service: 'users',
     action: 'create',
-    data: { name: 'John Doe' }
-  }
+    data: { name: 'John Doe' },
+  },
 });
 
 // Create a message in a specific queue
@@ -77,14 +77,14 @@ const highPriorityMessage = await app.service('queue').create({
     messageId: uuidv4(),
     timestamp: Date.now(),
     priority: 1,
-    scheduledFor: Date.now() + 60000 // Schedule for 1 minute in the future
+    scheduledFor: Date.now() + 60000, // Schedule for 1 minute in the future
   },
   payload: {
     service: 'orders',
     action: 'process',
     queueName: 'high_priority',
-    data: { orderId: '123' }
-  }
+    data: { orderId: '123' },
+  },
 });
 ```
 
@@ -102,12 +102,12 @@ try {
   await app.service('queue').create({
     metadata: {
       messageId: uuidv4(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     },
     payload: {
       service: 'test',
-      action: 'test'
-    }
+      action: 'test',
+    },
   });
 } catch (error) {
   console.error('Failed to create message:', error);
@@ -121,16 +121,20 @@ try {
 #### Methods
 
 - `create(data: QueueData): Promise<Queue>`
+
   - Creates a new message in the queue
   - Returns the created message
 
 - `get(id: Id): Promise<Queue>`
+
   - Retrieves a message by ID
 
 - `find(params?: Params): Promise<Queue[]>`
+
   - Retrieves messages based on query parameters
 
 - `patch(id: Id, data: QueuePatch): Promise<Queue>`
+
   - Updates a message
 
 - `remove(id: Id): Promise<Queue>`
@@ -189,11 +193,13 @@ interface Queue {
 ### Testing
 
 Run tests:
+
 ```bash
 pnpm test
 ```
 
 Run tests with coverage:
+
 ```bash
 pnpm test:coverage
 ```
@@ -201,10 +207,11 @@ pnpm test:coverage
 ### Building
 
 Build the library:
+
 ```bash
 pnpm build
 ```
 
 ## License
 
-MIT 
+MIT

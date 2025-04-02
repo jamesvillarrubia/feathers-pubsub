@@ -1,0 +1,70 @@
+name: Test
+
+on:
+  workflow_dispatch:
+  workflow_call:
+    inputs:
+      node_version:
+        required: true
+        type: string
+        default: '18'
+      run_integration_tests:
+        required: false
+        type: boolean
+        default: true
+      run_unit_tests:
+        required: false
+        type: boolean
+        default: true
+      run_e2e_tests:
+        required: false
+        type: boolean
+        default: true
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ inputs.node_version }}
+
+    - name: Install pnpm
+      uses: pnpm/action-setup@v2
+      with:
+        version: 8
+
+    - name: Install dependencies
+      run: pnpm install
+
+    - name: Run unit tests
+      if: ${{ inputs.run_unit_tests }}
+      run: pnpm test:unit
+
+    - name: Start Pub/Sub emulator
+      if: ${{ inputs.run_integration_tests }}
+      run: |
+        docker-compose up -d
+        # Wait for emulator to be ready
+        timeout 30 bash -c 'until nc -z localhost 8085; do sleep 1; done'
+
+    - name: Run integration tests
+      if: ${{ inputs.run_integration_tests }}
+      env:
+        PUBSUB_EMULATOR_HOST: localhost:8085
+        GOOGLE_CLOUD_PROJECT: some-project-id
+      run: pnpm test:integration
+
+    - name: Run e2e tests
+      if: ${{ inputs.run_e2e_tests }}
+      env:
+        PUBSUB_EMULATOR_HOST: localhost:8085
+        GOOGLE_CLOUD_PROJECT: some-project-id
+      run: pnpm test:e2e
+
+    - name: Stop Pub/Sub emulator
+      if: ${{ inputs.run_integration_tests }}
+      run: docker-compose down 

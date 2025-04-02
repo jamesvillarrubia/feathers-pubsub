@@ -2,11 +2,8 @@
 node_modules/
 .pnpm-store/
 
-# Build output
-dist/
-build/
-
 # Test coverage
+dist/
 coverage/
 
 # IDE and editor files

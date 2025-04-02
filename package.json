@@ -1,17 +1,22 @@
 {
-  "name": "@sera/feathers-pubsub",
-  "version": "1.0.0",
+  "name": "feathers-pubsub",
+  "version": "0.0.0-releaseit",
   "description": "FeathersJS service for Google Cloud Pub/Sub integration",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
+    "dev": "tsc -w",
     "test": "vitest",
+    "test:unit": "vitest run \"test/unit/queue.unit.test.ts\"",
+    "test:integration": "vitest run \"test/integration/queue.integration.test.ts\"",
+    "test:e2e": "vitest run \"test/e2e/queue.e2e.test.ts\"",
     "test:coverage": "vitest run --coverage",
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "format": "prettier --write \"**/*.{ts,json,md}\"",
-    "prepare": "pnpm build"
+    "lint": "eslint \"src/**/*.ts\" \"test/**/*.ts\"",
+    "lint:fix": "eslint \"src/**/*.ts\" \"test/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.{ts,json}\" \"test/**/*.{ts,json}\" \"*.{json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"src/**/*.{ts,json}\" \"test/**/*.{ts,json}\" \"*.{json,md,yml,yaml}\"",
+    "prepare": "npm run build"
   },
   "keywords": [
     "feathers",
@@ -36,24 +41,35 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
+    "@feathersjs/authentication": "5.0.33",
+    "@feathersjs/errors": "5.0.33",
     "@feathersjs/feathers": "^5.0.0",
+    "@feathersjs/schema": "5.0.33",
+    "@feathersjs/typebox": "5.0.33",
     "@google-cloud/pubsub": "4.11.0",
     "debug": "^4.3.4",
     "save": "2.9.0",
     "uuid": "9.0.1"
   },
   "devDependencies": {
-    "@types/debug": "^4.1.8",
-    "@types/node": "^20.0.0",
-    "@types/uuid": "^9.0.0",
+    "@feathersjs/feathers": "5.0.33",
+    "@feathersjs/rest-client": "5.0.33",
+    "@stepci/runner": "2.0.7",
+    "@types/debug": "4.1.12",
+    "@types/node": "20.17.28",
+    "@types/uuid": "9.0.8",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "@vitest/coverage-v8": "3.1.1",
+    "ajv": "8.17.1",
+    "axios": "1.8.4",
     "eslint": "^8.0.0",
-    "eslint-config-prettier": "^9.0.0",
+    "eslint-config-prettier": "9.1.0",
     "prettier": "^3.0.0",
     "sinon": "15.2.0",
+    "stepci": "2.8.2",
     "typescript": "^5.0.0",
-    "vitest": "^1.0.0"
+    "vitest": "^3.0.0"
   },
   "peerDependencies": {
     "@feathersjs/feathers": "^5.0.0"

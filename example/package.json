@@ -1,0 +1,38 @@
+{
+  "name": "feathers-pubsub-example",
+  "version": "1.0.0",
+  "description": "Example app for feathers-pubsub",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "start:listener": "node src/listener.js",
+    "dev": "nodemon src/index.js",
+    "dev:listener": "nodemon src/listener.js",
+    "emulator:up": "docker-compose up -d",
+    "emulator:down": "docker-compose down",
+    "test": "NODE_ENV=test vitest",
+    "test:watch": "NODE_ENV=test vitest watch",
+    "test:coverage": "NODE_ENV=test vitest run --coverage"
+  },
+  "dependencies": {
+    "@feathersjs/configuration": "^5.0.33",
+    "@feathersjs/errors": "^5.0.33",
+    "@feathersjs/express": "^5.0.33",
+    "@feathersjs/feathers": "^5.0.0",
+    "@feathersjs/schema": "^5.0.33",
+    "@feathersjs/socketio": "^5.0.33",
+    "@feathersjs/transport-commons": "^5.0.33",
+    "@feathersjs/typebox": "^5.0.33",
+    "@google-cloud/pubsub": "^4.0.0",
+    "axios": "^1.6.7",
+    "express": "^4.18.2",
+    "feathers-pubsub": "file:..",
+    "winston": "^3.17.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3",
+    "supertest": "^6.3.4",
+    "vitest": "^1.3.1"
+  }
+}

@@ -1,0 +1,146 @@
+name: Queue Service Tests
+version: 1.0.0
+
+env:
+  baseUrl: http://localhost:3030
+  debug: true
+
+tests:
+  queue-service:
+    steps:
+      - name: Create Basic Queue Message with Exact Response
+        http:
+          url: ${{env.baseUrl}}/pubsub
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            metadata:
+              priority: 5
+            payload:
+              service: test-service
+              action: create
+              queueName: basic-test-queue
+              data:
+                test: data
+        expect:
+          status: 201
+          json:
+            id: "!string"
+            metadata:
+              priority: 5
+              messageId: "!string"
+              timestamp: "!number"
+              retryCount: 0
+              maxRetries: 3
+              queueName: "basic-test-queue"
+            payload:
+              service: "test-service"
+              action: "create"
+              queueName: "basic-test-queue"
+              data:
+                test: "data"
+            status: "pending"
+            processingHistory: []
+
+      - name: Create High Priority Message
+        http:
+          url: ${{env.baseUrl}}/pubsub
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            metadata:
+              priority: 1
+            payload:
+              service: test-service
+              action: create
+              queueName: priority-test-queue
+              data:
+                priority: high
+        expect:
+          status: 201
+          json:
+            metadata:
+              priority: 1
+
+      - name: Create Scheduled Message
+        http:
+          url: ${{env.baseUrl}}/pubsub
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            metadata:
+              priority: 5
+              scheduledFor: "{{add timestamp 5000}}"
+            payload:
+              service: test-service
+              action: create
+              queueName: push-test-queue
+              data:
+                scheduled: true
+        expect:
+          status: 201
+          json:
+            metadata:
+              scheduledFor: "!number"
+
+      - name: Create Message with Invalid Service
+        http:
+          url: ${{env.baseUrl}}/pubsub
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            metadata:
+              priority: 5
+            payload:
+              service: non-existent-service
+              action: create
+              queueName: basic-test-queue
+              data:
+                test: data
+        expect:
+          status: 400
+          json:
+            message: "!string"
+
+      - name: Create Message with Invalid Action
+        http:
+          url: ${{env.baseUrl}}/pubsub
+          method: POST
+          headers:
+            Content-Type: application/json
+          json:
+            metadata:
+              priority: 5
+            payload:
+              service: test-service
+              action: invalid-action
+              queueName: basic-test-queue
+              data:
+                test: data
+        expect:
+          status: 400
+          json:
+            message: "!string"
+        log:
+          - name: Request URL
+            value: "{{request.url}}"
+          - name: Request Method
+            value: "{{request.method}}"
+          - name: Request Headers
+            value: "{{request.headers}}"
+          - name: Request Body
+            value: "{{request.body}}"
+          - name: Response Status
+            value: "{{response.status}}"
+          - name: Response Headers
+            value: "{{response.headers}}"
+          - name: Response Body
+            value: "{{response.body}}"
+          - name: Full Request
+            value: "{{request}}"
+          - name: Full Response
+            value: "{{response}}" 

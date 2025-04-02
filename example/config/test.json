@@ -1,0 +1,47 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "public": "../public/",
+  "origins": [
+    "http://localhost:3030"
+  ],
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "pubsub": {
+    "projectId": "test-project",
+    "apiEndpoint": "http://localhost:8085",
+    "queues": {
+      "test-queue": {
+        "topic": "test-queue",
+        "subscription": "test-queue-sub",
+        "maxRetries": 3,
+        "retryDelay": 60,
+        "messageTimeout": 300,
+        "batchSize": 10
+      },
+      "delayed-tasks": {
+        "topic": "delayed-tasks",
+        "subscription": "delayed-tasks-sub",
+        "maxRetries": 3,
+        "retryDelay": 60,
+        "messageTimeout": 300,
+        "batchSize": 10
+      },
+      "notifications": {
+        "topic": "notifications",
+        "subscription": "notifications-sub",
+        "maxRetries": 3,
+        "retryDelay": 30,
+        "messageTimeout": 60,
+        "batchSize": 100,
+        "pushEndpoint": "http://localhost:3030/pubsub-handler",
+        "deadLetter": {
+          "topic": "notifications-dlq",
+          "subscription": "notifications-dlq-sub"
+        }
+      }
+    }
+  }
+}

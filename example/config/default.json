@@ -1,0 +1,48 @@
+{
+  "host": "localhost",
+  "port": 3030,
+  "public": "../public/",
+  "origins": [
+    "http://localhost:3030"
+  ],
+  "paginate": {
+    "default": 10,
+    "max": 50
+  },
+  "pubsub": {
+    "projectId": "test-project",
+    "apiEndpoint": "http://pubsub:8085",
+    "queues": {
+      "basic-test-queue": {
+        "topic": "basic-test-queue",
+        "subscription": "basic-test-queue-sub",
+        "maxRetries": 3,
+        "retryDelay": 60,
+        "messageTimeout": 300,
+        "batchSize": 10
+      },
+      "priority-test-queue": {
+        "topic": "priority-test-queue",
+        "subscription": "priority-test-queue-sub",
+        "maxRetries": 3,
+        "retryDelay": 60,
+        "messageTimeout": 300,
+        "batchSize": 10,
+        "priorityLevels": ["high", "normal", "low"]
+      },
+      "push-test-queue": {
+        "topic": "push-test-queue",
+        "subscription": "push-test-queue-sub",
+        "maxRetries": 3,
+        "retryDelay": 30,
+        "messageTimeout": 60,
+        "batchSize": 100,
+        "pushEndpoint": "http://app:3030/push-handler",
+        "deadLetter": {
+          "topic": "push-test-queue-dlq",
+          "subscription": "push-test-queue-dlq-sub"
+        }
+      }
+    }
+  }
+}

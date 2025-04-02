@@ -13,14 +13,17 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: 20
-    - run: npm ci
+    - uses: pnpm/action-setup@v2
+      with:
+        version: 8
+    - run: pnpm install --frozen-lockfile
     - run: |
         git config user.name github-actions
         git config user.email github-actions@github.com
         git checkout -b update-dependencies-$GITHUB_RUN_ID
     - run: |
-        npx npm-check-updates -u
-        npm install
+        npx pnpm-update
+        pnpm install
     - run: |
         git commit -am "chore(dependencies): Update dependencies"
         git push origin update-dependencies-$GITHUB_RUN_ID

@@ -1,0 +1,29 @@
+version: '3.8'
+
+services:
+  pubsub:
+    image: google/cloud-sdk:emulators
+    command: gcloud beta emulators pubsub start --host-port=0.0.0.0:8085
+    ports:
+      - '8085:8085'
+    environment:
+      - PUBSUB_PROJECT_ID=test-project
+      - PUBSUB_EMULATOR_HOST=pubsub:8085
+      - GOOGLE_CLOUD_PROJECT=test-project
+
+  app:
+    image: node:20-alpine
+    working_dir: /app
+    volumes:
+      - ./:/app
+    ports:
+      - '3030:3030'
+    environment:
+      - NODE_ENV=development
+      - PORT=3030
+      - PUBSUB_EMULATOR_HOST=pubsub:8085
+      - GOOGLE_CLOUD_PROJECT=test-project
+      - DEBUG=queue:service,pubsub:init,feathers*
+    depends_on:
+      - pubsub
+    command: sh -c "cd /app && npm install && npm run build && cd ./example && ls -la && npm install && npm start"

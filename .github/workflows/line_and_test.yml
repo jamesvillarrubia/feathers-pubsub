@@ -12,35 +12,32 @@ on:
       - main # only works on PRs with base_ref=main and follows limits below
 
 jobs:
-  test: 
-    name: 'Node.js v${{ matrix.node }}'
+  lint:
     runs-on: ubuntu-latest
-    if: (github.event_name == 'pull_request' && startsWith(github.head_ref,'update-dependencies-') && github.base_ref == 'main') || github.event_name == 'workflow_dispatch' || github.event_name == 'push'
-    env:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+      - uses: pnpm/action-setup@v2
+        with:
+          version: 8
+      - name: Install dependencies
+        run: pnpm install
+      - name: Run linters
+        run: pnpm lint
+
+  test:
+    needs: lint
+    uses: ./.github/workflows/test.yml
+    with:
+      node_version: ${{ matrix.node }}
+      run_integration_tests: true
+      run_unit_tests: true
     strategy:
       matrix:
         node:
-          - 14
-          - 16
           - 18
           - 20
-    steps:
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '${{ matrix.node }}'
-      - uses: actions/checkout@v3
-      - name: 'Cache node_modules'
-        uses: actions/cache@v3
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-v${{ matrix.node }}-${{ hashFiles('**/package.json') }}
-          restore-keys: |
-            ${{ runner.os }}-node-v${{ matrix.node }}-
-      - name: Install dependencies
-        run: npm ci
-      - name: Run linters
-        run: npm run lint
-      - name: Run tests
-        run: npm run coverage
+          - 22
+          - 23
